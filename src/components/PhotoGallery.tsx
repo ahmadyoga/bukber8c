@@ -5,7 +5,8 @@ import { useEffect, useState } from 'react';
 interface Photo {
     id: string;
     name: string;
-    thumbnailLink: string;
+    thumbnailUrl: string;
+    viewUrl: string;
 }
 
 export default function PhotoGallery() {
@@ -46,11 +47,11 @@ export default function PhotoGallery() {
                 {photos.map((photo) => (
                     <button
                         key={photo.id}
-                        onClick={() => setLightbox(photo.thumbnailLink)}
+                        onClick={() => setLightbox(photo.thumbnailUrl)}
                         className="gallery-item group"
                     >
                         <img
-                            src={photo.thumbnailLink}
+                            src={photo.thumbnailUrl}
                             alt={photo.name}
                             loading="lazy"
                             className="w-full h-40 sm:h-48 object-cover rounded-xl transition-transform duration-300 group-hover:scale-105"
