@@ -1,65 +1,93 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useState } from 'react';
+import CountdownTimer from '@/components/CountdownTimer';
+import AttendanceForm from '@/components/AttendanceForm';
+import AttendanceList from '@/components/AttendanceList';
+import PhotoGallery from '@/components/PhotoGallery';
+import ShareButtons from '@/components/ShareButtons';
+import EventDetails from '@/components/EventDetails';
+
+export default function HomePage() {
+  const [refreshKey, setRefreshKey] = useState(0);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <main>
+      {/* Lanterns */}
+      <div className="lantern lantern-left" aria-hidden="true" />
+      <div className="lantern lantern-right" aria-hidden="true" />
+
+      {/* Hero */}
+      <section className="hero fade-in">
+        <span className="hero-crescent" role="img" aria-label="Crescent moon">
+          🌙
+        </span>
+        <h1 className="hero-title">Bukber Alumni<br />8C Official</h1>
+        <p className="hero-subtitle">Ramadhan 1447 H</p>
+        <div className="divider" />
+        <p style={{ fontSize: '0.9rem', opacity: 0.7, maxWidth: '400px', margin: '0 auto' }}>
+          Mari berkumpul kembali dalam kehangatan silaturahmi dan berbagi kebahagiaan di bulan suci Ramadhan
+        </p>
+      </section>
+
+      {/* Event Details */}
+      <section className="section fade-in-delay-1">
+        <h2 className="section-title">📋 Detail Acara</h2>
+        <EventDetails />
+      </section>
+
+      {/* Countdown */}
+      <section className="section fade-in-delay-2">
+        <h2 className="section-title">⏳ Hitung Mundur</h2>
+        <CountdownTimer targetDate="2026-03-15T18:00:00+07:00" />
+        <p style={{ textAlign: 'center', fontSize: '0.8rem', opacity: 0.5, marginTop: '0.75rem' }}>
+          * Tanggal sementara, akan diperbarui setelah konfirmasi
+        </p>
+      </section>
+
+      {/* Attendance Form */}
+      <section className="section fade-in-delay-3">
+        <AttendanceForm onSuccess={() => setRefreshKey((k) => k + 1)} />
+      </section>
+
+      {/* Share */}
+      <section className="section fade-in-delay-4">
+        <h2 className="section-title">📤 Bagikan Undangan</h2>
+        <ShareButtons />
+      </section>
+
+      {/* Photo Gallery */}
+      <section className="section fade-in-delay-5">
+        <h2 className="section-title">📸 Kenangan Tahun Lalu</h2>
+        <PhotoGallery />
+      </section>
+
+      {/* Attendance List */}
+      <section className="section fade-in-delay-6">
+        <h2 className="section-title">💬 Yang Sudah Konfirmasi</h2>
+        <AttendanceList refreshKey={refreshKey} />
+      </section>
+
+      {/* Footer */}
+      <footer style={{ textAlign: 'center', padding: '2rem 1rem 3rem', position: 'relative', zIndex: 1 }}>
+        <div className="divider" />
+        <p style={{ fontSize: '0.8rem', opacity: 0.4, marginTop: '1rem' }}>
+          🌙 Bukber Alumni 8C Official — Ramadhan 1447 H
+        </p>
+        <a
+          href="/attendance"
+          style={{
+            display: 'inline-block',
+            marginTop: '0.75rem',
+            fontSize: '0.8rem',
+            color: 'var(--color-gold)',
+            textDecoration: 'underline',
+            opacity: 0.6,
+          }}
+        >
+          Lihat Daftar Kehadiran Lengkap →
+        </a>
+      </footer>
+    </main>
   );
 }
