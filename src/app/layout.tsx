@@ -16,6 +16,7 @@ const amiri = Amiri({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://bukber8c.vercel.app'),
   title: "Bukber Alumni 8C Official — Ramadhan 1447 H",
   description:
     "Undangan Buka Puasa Bersama Alumni 8C Official. Konfirmasi kehadiran dan lihat siapa saja yang hadir!",
@@ -28,7 +29,20 @@ export const metadata: Metadata = {
     title: "Bukber Alumni 8C Official — Ramadhan 1447 H",
     description: "Yuk ikut Bukber Alumni 8C Official! Konfirmasi kehadiran kamu di sini 🌙",
     type: "website",
-    images: [{ url: "/icon.png" }],
+    url: "https://bukber8c.vercel.app",
+    siteName: "Bukber Alumni 8C Official",
+    images: [{
+      url: "/icon.png",
+      width: 800,
+      height: 800,
+      alt: "Bukber Alumni 8C Official",
+    }],
+  },
+  twitter: {
+    card: "summary",
+    title: "Bukber Alumni 8C Official — Ramadhan 1447 H",
+    description: "Yuk ikut Bukber Alumni 8C Official! Konfirmasi kehadiran kamu di sini 🌙",
+    images: ["/icon.png"],
   },
 };
 
