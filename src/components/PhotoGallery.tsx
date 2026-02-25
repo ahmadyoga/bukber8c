@@ -9,9 +9,54 @@ interface Photo {
     viewUrl: string;
 }
 
-interface LightboxState {
-    url: string;
-    index: number;
+function LightboxImage({ src, alt }: { src: string; alt: string }) {
+    const [loaded, setLoaded] = useState(false);
+
+    return (
+        <div
+            style={{
+                position: 'relative',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                maxWidth: '90vw',
+                maxHeight: '82vh',
+            }}
+            onClick={(e) => e.stopPropagation()}
+            onPointerDown={(e) => e.stopPropagation()}
+            onPointerUp={(e) => e.stopPropagation()}
+        >
+            {!loaded && (
+                <div
+                    style={{
+                        width: '70vw',
+                        maxWidth: '500px',
+                        height: '60vh',
+                        borderRadius: '0.75rem',
+                        animation: 'skeleton-pulse 1.5s ease-in-out infinite',
+                    }}
+                />
+            )}
+            <img
+                key={src}
+                src={src}
+                alt={alt}
+                draggable={false}
+                onLoad={() => setLoaded(true)}
+                style={{
+                    position: loaded ? 'relative' : 'absolute',
+                    maxWidth: '90vw',
+                    maxHeight: '82vh',
+                    objectFit: 'contain',
+                    borderRadius: '0.75rem',
+                    boxShadow: '0 0 60px rgba(0,0,0,0.8)',
+                    opacity: loaded ? 1 : 0,
+                    transition: 'opacity 0.3s ease',
+                    display: 'block',
+                }}
+            />
+        </div>
+    );
 }
 
 function MarqueeRow({
@@ -25,11 +70,9 @@ function MarqueeRow({
 }) {
     const rowRef = useRef<HTMLDivElement>(null);
 
-    // Pause on hover
     const pause = () => { if (rowRef.current) rowRef.current.style.animationPlayState = 'paused'; };
     const resume = () => { if (rowRef.current) rowRef.current.style.animationPlayState = 'running'; };
 
-    // Duplicate photos for seamless loop
     const doubled = [...photos, ...photos];
 
     return (
@@ -63,7 +106,8 @@ function MarqueeRow({
 export default function PhotoGallery() {
     const [photos, setPhotos] = useState<Photo[]>([]);
     const [loading, setLoading] = useState(true);
-    const [lightbox, setLightbox] = useState<LightboxState | null>(null);
+    const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+    const swipeStartX = useRef(0);
 
     useEffect(() => {
         fetch('/api/photos')
@@ -73,27 +117,24 @@ export default function PhotoGallery() {
             .finally(() => setLoading(false));
     }, []);
 
-    const openLightbox = (photo: Photo, index: number) =>
-        setLightbox({ url: photo.thumbnailUrl, index });
+    const openLightbox = (_photo: Photo, index: number) => setLightboxIndex(index);
 
     const navigate = (dir: 1 | -1) => {
-        if (!lightbox) return;
-        const next = (lightbox.index + dir + photos.length) % photos.length;
-        setLightbox({ url: photos[next].thumbnailUrl, index: next });
+        if (lightboxIndex === null) return;
+        setLightboxIndex((lightboxIndex + dir + photos.length) % photos.length);
     };
 
-    // Keyboard nav
     useEffect(() => {
-        if (!lightbox) return;
+        if (lightboxIndex === null) return;
         const handler = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') setLightbox(null);
+            if (e.key === 'Escape') setLightboxIndex(null);
             if (e.key === 'ArrowRight') navigate(1);
             if (e.key === 'ArrowLeft') navigate(-1);
         };
         window.addEventListener('keydown', handler);
         return () => window.removeEventListener('keydown', handler);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [lightbox]);
+    }, [lightboxIndex]);
 
     if (loading) {
         return (
@@ -106,7 +147,6 @@ export default function PhotoGallery() {
 
     if (photos.length === 0) return null;
 
-    // Split into two rows
     const mid = Math.ceil(photos.length / 2);
     const row1 = photos.slice(0, mid);
     const row2 = photos.slice(mid);
@@ -121,48 +161,46 @@ export default function PhotoGallery() {
             </div>
 
             {/* Lightbox */}
-            {lightbox && (
-                <div className="lightbox" onClick={() => setLightbox(null)}>
-                    {/* Close */}
+            {lightboxIndex !== null && (
+                <div
+                    className="lightbox"
+                    onClick={() => setLightboxIndex(null)}
+                    onPointerDown={(e) => { swipeStartX.current = e.clientX; }}
+                    onPointerUp={(e) => {
+                        const dx = e.clientX - swipeStartX.current;
+                        if (Math.abs(dx) < 40) return;
+                        navigate(dx < 0 ? 1 : -1);
+                    }}
+                >
                     <button
                         className="lightbox-btn lightbox-close"
-                        onClick={() => setLightbox(null)}
+                        onClick={() => setLightboxIndex(null)}
                         aria-label="Tutup"
-                    >
-                        ✕
-                    </button>
+                    >✕</button>
 
-                    {/* Prev */}
                     <button
                         className="lightbox-btn lightbox-prev"
-                        onClick={(e) => { e.stopPropagation(); navigate(-1); }}
+                        onClick={(e) => { e.stopPropagation(); e.currentTarget.blur(); navigate(-1); }}
                         aria-label="Sebelumnya"
-                    >
-                        ‹
-                    </button>
+                    >‹</button>
 
-                    <img
-                        src={lightbox.url.replace('sz=w800', 'sz=w1600')}
-                        alt="Full size"
-                        className="lightbox-img"
-                        onClick={(e) => e.stopPropagation()}
+                    <LightboxImage
+                        src={photos[lightboxIndex]?.thumbnailUrl.replace('sz=w800', 'sz=w1600')}
+                        alt={photos[lightboxIndex]?.name ?? ''}
                     />
 
-                    {/* Next */}
                     <button
                         className="lightbox-btn lightbox-next"
-                        onClick={(e) => { e.stopPropagation(); navigate(1); }}
+                        onClick={(e) => { e.stopPropagation(); e.currentTarget.blur(); navigate(1); }}
                         aria-label="Berikutnya"
-                    >
-                        ›
-                    </button>
+                    >›</button>
 
-                    {/* Counter */}
                     <p className="lightbox-counter">
-                        {lightbox.index + 1} / {photos.length}
+                        {lightboxIndex + 1} / {photos.length}
                     </p>
                 </div>
             )}
         </div>
     );
 }
+

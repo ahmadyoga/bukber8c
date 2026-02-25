@@ -660,14 +660,7 @@ body {
   cursor: pointer;
 }
 
-.lightbox-img {
-  max-width: 90vw;
-  max-height: 82vh;
-  object-fit: contain;
-  border-radius: 0.75rem;
-  box-shadow: 0 0 60px rgba(0, 0, 0, 0.8);
-  cursor: default;
-}
+/* .lightbox-img styles moved to inline in LightboxImage component */
 
 .lightbox-btn {
   position: absolute;
@@ -687,6 +680,10 @@ body {
   background: rgba(212, 168, 67, 0.2);
   border-color: var(--color-gold);
   color: var(--color-gold);
+}
+
+.lightbox-btn:focus {
+  outline: none;
 }
 
 .lightbox-close {
