@@ -20,10 +20,15 @@ export const metadata: Metadata = {
   description:
     "Undangan Buka Puasa Bersama Alumni 8C Official. Konfirmasi kehadiran dan lihat siapa saja yang hadir!",
   keywords: ["bukber", "alumni", "8C Official", "ramadhan", "1447 H", "buka puasa bersama"],
+  icons: {
+    icon: "/icon.png",
+    apple: "/icon.png",
+  },
   openGraph: {
     title: "Bukber Alumni 8C Official — Ramadhan 1447 H",
     description: "Yuk ikut Bukber Alumni 8C Official! Konfirmasi kehadiran kamu di sini 🌙",
     type: "website",
+    images: [{ url: "/icon.png" }],
   },
 };
 
