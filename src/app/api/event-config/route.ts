@@ -13,6 +13,7 @@ export async function GET() {
                 config: {
                     title: 'Bukber Alumni 8C Official',
                     date: 'TBA',
+                    isoDate: null,
                     time: 'TBA',
                     location: 'TBA',
                     mapsUrl: '',
@@ -29,6 +30,7 @@ export async function GET() {
             config: {
                 title: 'Bukber Alumni 8C Official',
                 date: 'TBA',
+                isoDate: null,
                 time: 'TBA',
                 location: 'TBA',
                 mapsUrl: '',

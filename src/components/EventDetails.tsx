@@ -6,6 +6,7 @@ import type { EventConfig } from '@/types';
 export default function EventDetails() {
     const [config, setConfig] = useState<EventConfig | null>(null);
     const [loading, setLoading] = useState(true);
+    const [embedUrl, setEmbedUrl] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchConfig = async () => {
@@ -13,6 +14,14 @@ export default function EventDetails() {
                 const res = await fetch('/api/event-config');
                 const data = await res.json();
                 setConfig(data.config);
+
+                // Resolve short Maps URL to embed URL server-side
+                if (data.config?.mapsUrl) {
+                    fetch(`/api/maps-embed?url=${encodeURIComponent(data.config.mapsUrl)}`)
+                        .then((r) => r.json())
+                        .then((d) => { if (d.embedUrl) setEmbedUrl(d.embedUrl); })
+                        .catch(() => { });
+                }
             } catch {
                 setConfig({
                     title: 'Bukber Alumni 8C Official',
@@ -102,14 +111,17 @@ export default function EventDetails() {
                 </div>
             )}
 
-            {config.mapsUrl && (
+            {embedUrl && (
                 <div className="maps-container">
                     <iframe
-                        src={config.mapsUrl}
+                        src={embedUrl}
+                        width="100%"
+                        height="300"
                         allowFullScreen
                         loading="lazy"
                         referrerPolicy="no-referrer-when-downgrade"
                         title="Event Location"
+                        style={{ border: 0, borderRadius: '0.75rem' }}
                     />
                 </div>
             )}

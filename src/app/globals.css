@@ -78,8 +78,15 @@ body {
 }
 
 @keyframes lantern-sway {
-  0%, 100% { transform: rotate(-5deg) translateY(0); }
-  50% { transform: rotate(5deg) translateY(-8px); }
+
+  0%,
+  100% {
+    transform: rotate(-5deg) translateY(0);
+  }
+
+  50% {
+    transform: rotate(5deg) translateY(-8px);
+  }
 }
 
 /* ═══════ Stars ═══════ */
@@ -100,8 +107,17 @@ body {
 }
 
 @keyframes star-twinkle {
-  0%, 100% { opacity: 0.2; transform: scale(1); }
-  50% { opacity: 0.8; transform: scale(1.5); }
+
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(1.5);
+  }
 }
 
 /* ═══════ Hero ═══════ */
@@ -139,8 +155,15 @@ body {
 }
 
 @keyframes crescent-glow {
-  0%, 100% { filter: drop-shadow(0 0 20px rgba(212, 168, 67, 0.3)); }
-  50% { filter: drop-shadow(0 0 40px rgba(212, 168, 67, 0.6)); }
+
+  0%,
+  100% {
+    filter: drop-shadow(0 0 20px rgba(212, 168, 67, 0.3));
+  }
+
+  50% {
+    filter: drop-shadow(0 0 40px rgba(212, 168, 67, 0.6));
+  }
 }
 
 .divider {
@@ -383,6 +406,7 @@ body {
     opacity: 0;
     transform: translateX(-50%) translateY(1rem);
   }
+
   to {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
@@ -481,6 +505,111 @@ body {
   border-color: var(--color-gold) !important;
 }
 
+/* ═══════ Gallery — Infinite Marquee ═══════ */
+.marquee-wrapper {
+  overflow: hidden;
+  width: 100%;
+  mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+}
+
+.marquee-track {
+  display: flex;
+  gap: 0.75rem;
+  width: max-content;
+  will-change: transform;
+}
+
+.marquee-forward {
+  animation: marquee-scroll-left 100s linear infinite;
+}
+
+.marquee-reverse {
+  animation: marquee-scroll-right 100s linear infinite;
+}
+
+@keyframes marquee-scroll-left {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marquee-scroll-right {
+  from {
+    transform: translateX(-50%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+.marquee-item {
+  position: relative;
+  flex-shrink: 0;
+  width: 150px;
+  height: 200px;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid rgba(212, 168, 67, 0.15);
+  padding: 0;
+  background: none;
+  transition: border-color 0.3s;
+}
+
+@media (min-width: 640px) {
+  .marquee-item {
+    width: 200px;
+    height: 260px;
+  }
+}
+
+.marquee-item:hover {
+  border-color: rgba(212, 168, 67, 0.6);
+}
+
+.marquee-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  display: block;
+}
+
+.marquee-zoom-icon {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+
+.marquee-item:hover .marquee-zoom-icon {
+  opacity: 1;
+}
+
+.marquee-skeleton {
+  height: 200px;
+  border-radius: 0.75rem;
+  background: linear-gradient(135deg, var(--color-dark-card), rgba(6, 78, 59, 0.2));
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+@media (min-width: 640px) {
+  .marquee-skeleton {
+    height: 260px;
+  }
+}
+
 /* ═══════ Gallery ═══════ */
 .gallery-item {
   position: relative;
@@ -495,28 +624,107 @@ body {
 .gallery-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(2, 26, 19, 0.5), transparent);
+  background: linear-gradient(to top, rgba(2, 26, 19, 0.6), transparent 60%);
   opacity: 0;
   transition: opacity 0.3s;
   border-radius: 0.75rem;
   pointer-events: none;
 }
 
-.gallery-item:hover .gallery-overlay {
+.gallery-item:hover .gallery-overlay,
+.marquee-item:hover .gallery-overlay {
   opacity: 1;
+}
+
+/* ═══════ Gallery Page — Mosaic Layout ═══════ */
+/* Layout is handled via inline styles in gallery/page.tsx */
+/* Hover effect for mosaic cells */
+.gallery-mosaic-cell {
+  transition: opacity 0.18s;
+}
+
+.gallery-mosaic-cell:active {
+  opacity: 0.75;
 }
 
 /* ═══════ Lightbox ═══════ */
 .lightbox {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.92);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 200;
-  animation: fade-in 0.3s ease-out;
+  animation: fade-in 0.25s ease-out;
   cursor: pointer;
+}
+
+.lightbox-img {
+  max-width: 90vw;
+  max-height: 82vh;
+  object-fit: contain;
+  border-radius: 0.75rem;
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.8);
+  cursor: default;
+}
+
+.lightbox-btn {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(212, 168, 67, 0.3);
+  color: white;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  z-index: 10;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox-btn:hover {
+  background: rgba(212, 168, 67, 0.2);
+  border-color: var(--color-gold);
+  color: var(--color-gold);
+}
+
+.lightbox-close {
+  top: 1rem;
+  right: 1rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  font-size: 1.1rem;
+}
+
+.lightbox-prev,
+.lightbox-next {
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  font-size: 2rem;
+}
+
+.lightbox-prev {
+  left: 1rem;
+}
+
+.lightbox-next {
+  right: 1rem;
+}
+
+.lightbox-counter {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  pointer-events: none;
 }
 
 /* ═══════ Skeleton ═══════ */
@@ -536,8 +744,15 @@ body {
 }
 
 @keyframes skeleton-pulse {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 0.8; }
+
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+
+  50% {
+    opacity: 0.8;
+  }
 }
 
 /* ═══════ Modal ═══════ */
@@ -570,8 +785,15 @@ body {
 }
 
 @keyframes modal-slide-up {
-  from { transform: translateY(1rem); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(1rem);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 /* ═══════ Attendance Page ═══════ */
@@ -691,20 +913,42 @@ body {
 
 /* ═══════ Animation Utilities ═══════ */
 @keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .fade-in {
   animation: fade-in 0.6s ease-out;
 }
 
-.fade-in-delay-1 { animation: fade-in 0.6s ease-out 0.1s both; }
-.fade-in-delay-2 { animation: fade-in 0.6s ease-out 0.2s both; }
-.fade-in-delay-3 { animation: fade-in 0.6s ease-out 0.3s both; }
-.fade-in-delay-4 { animation: fade-in 0.6s ease-out 0.4s both; }
-.fade-in-delay-5 { animation: fade-in 0.6s ease-out 0.5s both; }
-.fade-in-delay-6 { animation: fade-in 0.6s ease-out 0.6s both; }
+.fade-in-delay-1 {
+  animation: fade-in 0.6s ease-out 0.1s both;
+}
+
+.fade-in-delay-2 {
+  animation: fade-in 0.6s ease-out 0.2s both;
+}
+
+.fade-in-delay-3 {
+  animation: fade-in 0.6s ease-out 0.3s both;
+}
+
+.fade-in-delay-4 {
+  animation: fade-in 0.6s ease-out 0.4s both;
+}
+
+.fade-in-delay-5 {
+  animation: fade-in 0.6s ease-out 0.5s both;
+}
+
+.fade-in-delay-6 {
+  animation: fade-in 0.6s ease-out 0.6s both;
+}
 
 /* ═══════ Responsive ═══════ */
 @media (min-width: 768px) {

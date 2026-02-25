@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import type { EventConfig } from '@/types';
 import CountdownTimer from '@/components/CountdownTimer';
 import AttendanceForm from '@/components/AttendanceForm';
 import AttendanceList from '@/components/AttendanceList';
@@ -10,6 +11,14 @@ import EventDetails from '@/components/EventDetails';
 
 export default function HomePage() {
   const [refreshKey, setRefreshKey] = useState(0);
+  const [eventConfig, setEventConfig] = useState<EventConfig | null>(null);
+
+  useEffect(() => {
+    fetch('/api/event-config')
+      .then((r) => r.json())
+      .then((d) => setEventConfig(d.config))
+      .catch(() => { });
+  }, []);
 
   return (
     <main>
@@ -36,14 +45,13 @@ export default function HomePage() {
         <EventDetails />
       </section>
 
-      {/* Countdown */}
-      <section className="section fade-in-delay-2">
-        <h2 className="section-title">⏳ Hitung Mundur</h2>
-        <CountdownTimer targetDate="2026-03-15T18:00:00+07:00" />
-        <p style={{ textAlign: 'center', fontSize: '0.8rem', opacity: 0.5, marginTop: '0.75rem' }}>
-          * Tanggal sementara, akan diperbarui setelah konfirmasi
-        </p>
-      </section>
+      {/* Countdown — only shown when isoDate is set in Firestore eventConfig/main */}
+      {eventConfig?.isoDate && (
+        <section className="section fade-in-delay-2">
+          <h2 className="section-title">⏳ Hitung Mundur</h2>
+          <CountdownTimer targetDate={eventConfig.isoDate} />
+        </section>
+      )}
 
       {/* Attendance Form */}
       <section className="section fade-in-delay-3">
@@ -60,6 +68,25 @@ export default function HomePage() {
       <section className="section fade-in-delay-5">
         <h2 className="section-title">📸 Kenangan Tahun Lalu</h2>
         <PhotoGallery />
+        <div style={{ textAlign: 'center', marginTop: '1.25rem' }}>
+          <a
+            href="/gallery"
+            style={{
+              display: 'inline-block',
+              padding: '0.6rem 1.5rem',
+              border: '1px solid rgba(212,168,67,0.4)',
+              borderRadius: '999px',
+              color: 'var(--color-gold)',
+              fontSize: '0.85rem',
+              fontWeight: 600,
+              letterSpacing: '0.04em',
+              textDecoration: 'none',
+              transition: 'background 0.2s, border-color 0.2s',
+            }}
+          >
+            🖼️ Lihat Semua Foto
+          </a>
+        </div>
       </section>
 
       {/* Attendance List */}

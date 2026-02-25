@@ -14,6 +14,9 @@ interface TimeLeft {
 }
 
 export default function CountdownTimer({ targetDate }: CountdownTimerProps) {
+    // Don't render if no valid date is set
+    if (!targetDate || isNaN(new Date(targetDate).getTime())) return null;
+
     const calculateTimeLeft = useCallback((): TimeLeft => {
         const target = new Date(targetDate).getTime();
         const now = new Date().getTime();
